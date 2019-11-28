@@ -29,8 +29,7 @@
     NSDictionary *fileData = @{
                                @"mime": [FileHelper MIMETypeFromURL:url],
                                @"name": [FileHelper fileNameFromPath: [url absoluteString]],
-                               @"oldpath": [url absoluteString],
-                               @"sharedPath": [FileHelper saveImageToAppGroupFolder:url]
+                               @"path": [FileHelper saveImageToAppGroupFolder:url]
                                };
     
     return fileData;
