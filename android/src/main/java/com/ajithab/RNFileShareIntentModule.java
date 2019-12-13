@@ -62,6 +62,7 @@ public class RNFileShareIntentModule extends ReactContextBaseJavaModule implemen
   private void shareFile(Intent intent) {
     String action = intent.getAction();
     String type = intent.getType();
+    Activity currentActivity = getCurrentActivity();
 
     FileHelper fileHelper = new FileHelper(this.reactContext);
 
@@ -70,7 +71,7 @@ public class RNFileShareIntentModule extends ReactContextBaseJavaModule implemen
       if (type.startsWith("image/") || type.startsWith("video/") || type.startsWith("application/")) {
         Uri fileUri = (Uri) intent.getParcelableExtra(Intent.EXTRA_STREAM);
         if (fileUri != null) {
-          res.pushMap(fileHelper.getFileData(fileUri));
+          res.pushMap(fileHelper.getFileData(fileUri, currentActivity));
           successShareCallback.invoke(res);
         }
       }
@@ -78,7 +79,7 @@ public class RNFileShareIntentModule extends ReactContextBaseJavaModule implemen
       ArrayList<Uri> fileUris = intent.getParcelableArrayListExtra(Intent.EXTRA_STREAM);
       if (fileUris != null) {
         for (Uri uri: fileUris) {
-          res.pushMap(fileHelper.getFileData(uri));
+          res.pushMap(fileHelper.getFileData(uri, currentActivity));
         }
         successShareCallback.invoke(res);
       }
