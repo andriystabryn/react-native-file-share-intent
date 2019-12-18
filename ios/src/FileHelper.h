@@ -10,7 +10,7 @@
 
 @interface FileHelper : NSObject
 
-+ (NSString *)MIMETypeFromURL:(NSURL *)localFileURL;
++ (NSString *)MIMETypeFromPath:(NSString *)filePath;
 
 + (NSString *)fileNameFromPath:(NSString *)filePath;
 
