@@ -28,10 +28,15 @@
 + (NSDictionary *)getFileData:(NSURL *)url
 {
     NSString *newUrl = [FileHelper saveImageToAppGroupFolder:url];
+    
+    NSError* error;
+    NSDictionary *fileAttributes = [[NSFileManager defaultManager] attributesOfItemAtPath:newUrl error:&error];
+
     NSDictionary *fileData = @{
                                @"mime": [FileHelper MIMETypeFromPath:newUrl],
                                @"name": [FileHelper fileNameFromPath: [url absoluteString]],
-                               @"path": newUrl
+                               @"path": newUrl,
+                               @"size": [NSNumber numberWithLongLong:[fileAttributes fileSize]]
                                };
     
     return fileData;
@@ -44,7 +49,7 @@
     NSError *error = nil;
     NSString *fileExt = [[[image absoluteString] pathExtension] lowercaseString];
     if ([fileExt isEqual: @"heic"]) {
-        NSString *jpgPathToFile = [[filePath stringByDeletingLastPathComponent] stringByAppendingPathExtension: @"jpg"];
+        NSString *jpgPathToFile = [[filePath stringByDeletingPathExtension] stringByAppendingPathExtension: @"jpg"];
 
         UIImage *uiimage = [UIImage imageWithData:[NSData dataWithContentsOfURL:image]];
         

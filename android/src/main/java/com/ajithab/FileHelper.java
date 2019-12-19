@@ -12,6 +12,8 @@ import android.provider.MediaStore;
 import android.provider.OpenableColumns;
 import android.webkit.MimeTypeMap;
 
+import java.io.File;
+
 public class FileHelper {
 
     private final ReactApplicationContext reactContext;
@@ -83,6 +85,7 @@ public class FileHelper {
 
     public WritableMap getFileData(Uri uri, Context currentActivity) {
         String realPath = RealPathUtil.getRealPathFromURI(currentActivity, uri);
+        File file = new File(realPath);
         String mime = "";
         if (realPath != null) {
             Uri path = Uri.parse(realPath);
@@ -93,9 +96,13 @@ public class FileHelper {
             realPath = path.toString();
         }
         WritableMap fileData = new WritableNativeMap();
+
+        Number fileSize = file.length();
+
         fileData.putString("name", this.getFileName(uri));
         fileData.putString("mime", mime);
         fileData.putString("path", realPath);
+        fileData.putString("size", fileSize.toString());
 
         return fileData;
     }
