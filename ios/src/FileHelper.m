@@ -44,7 +44,8 @@
 
 + ( NSString * ) saveImageToAppGroupFolder: ( NSURL * ) image
 {
-    NSString *fileName = [FileHelper fileNameFromPath: [image absoluteString]];
+    NSString *fileName = [[FileHelper fileNameFromPath: [image absoluteString]] stringByReplacingOccurrencesOfString:@"%20" withString:@"_"];
+
     NSString *filePath = [[FileHelper getSharedFolderPath] stringByAppendingPathComponent: fileName ];
     NSError *error = nil;
     NSString *fileExt = [[[image absoluteString] pathExtension] lowercaseString];
