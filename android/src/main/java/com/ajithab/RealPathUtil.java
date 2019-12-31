@@ -18,7 +18,7 @@ import java.io.InputStream;
 import java.util.UUID;
 
 public class RealPathUtil {
-    public static String getRealPathFromURI(final Context context, final Uri uri) {
+    public static String getRealPathFromURI(final Context context, final Uri uri, String fileName) {
 
         final boolean isKitKat = Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT;
 
@@ -70,7 +70,7 @@ public class RealPathUtil {
         }
         // MediaStore (and general)
         else if ("content".equalsIgnoreCase(uri.getScheme())) {
-            return getImagePath(context, uri);
+            return getImagePath(context, uri, fileName);
         }
         // File
         else if ("file".equalsIgnoreCase(uri.getScheme())) {
@@ -138,20 +138,20 @@ public class RealPathUtil {
         return "com.android.providers.media.documents".equals(uri.getAuthority());
     }
 
-    public static String getImagePath(Context context, Uri uri) {
+    public static String getImagePath(Context context, Uri uri, String fileName) {
         if ("content".equalsIgnoreCase(uri.getScheme())) {
             if (isGoogleOldPhotosUri(uri)) {
                 // return http path, then download file.
                 return uri.getLastPathSegment();
             } else if (isGoogleNewPhotosUri(uri) || isMMSFile(uri)) {
                 // copy from uri. context.getContentResolver().openInputStream(uri);
-                return copyFile(context, uri);
+                return copyFile(context, uri, fileName);
             }
         }
         String url = getDataColumn(context, uri, null, null);
 
         if (url == null) {
-            url = copyFile(context, uri);
+            url = copyFile(context, uri, fileName);
         }
         return url;
     }
@@ -172,7 +172,7 @@ public class RealPathUtil {
         return "com.android.mms.file".equals(uri.getAuthority());
     }
 
-    private static String copyFile(Context context, Uri uri) {
+    private static String copyFile(Context context, Uri uri, String fileName) {
 
         String filePath;
         InputStream inputStream = null;
@@ -181,7 +181,7 @@ public class RealPathUtil {
             inputStream = context.getContentResolver().openInputStream(uri);
 
             File extDir = context.getExternalFilesDir(null);
-            filePath = extDir.getAbsolutePath() + "/IMG_" + UUID.randomUUID().toString() + ".jpg";
+            filePath = extDir.getAbsolutePath() + "/" + fileName;
             outStream = new BufferedOutputStream(new FileOutputStream
                     (filePath));
 

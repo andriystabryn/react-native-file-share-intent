@@ -84,7 +84,8 @@ public class FileHelper {
     }
 
     public WritableMap getFileData(Uri uri, Context currentActivity) {
-        String realPath = RealPathUtil.getRealPathFromURI(currentActivity, uri);
+        String fileName = this.getFileName(uri);
+        String realPath = RealPathUtil.getRealPathFromURI(currentActivity, uri, fileName);
         File file = new File(realPath);
         String mime = "";
         if (realPath != null) {
@@ -99,7 +100,7 @@ public class FileHelper {
 
         Number fileSize = file.length();
 
-        fileData.putString("name", this.getFileName(uri));
+        fileData.putString("name", fileName);
         fileData.putString("mime", mime);
         fileData.putString("path", realPath);
         fileData.putString("size", fileSize.toString());
