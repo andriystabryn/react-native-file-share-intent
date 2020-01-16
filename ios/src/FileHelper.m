@@ -42,6 +42,82 @@
     return fileData;
 }
 
++ (UIImage *)fixRotation:(UIImage *)image{
+
+    if (image.imageOrientation == UIImageOrientationUp) return image;
+    CGAffineTransform transform = CGAffineTransformIdentity;
+
+    switch (image.imageOrientation) {
+        case UIImageOrientationDown:
+        case UIImageOrientationDownMirrored:
+            transform = CGAffineTransformTranslate(transform, image.size.width, image.size.height);
+            transform = CGAffineTransformRotate(transform, M_PI);
+            break;
+
+        case UIImageOrientationLeft:
+        case UIImageOrientationLeftMirrored:
+            transform = CGAffineTransformTranslate(transform, image.size.width, 0);
+            transform = CGAffineTransformRotate(transform, M_PI_2);
+            break;
+
+        case UIImageOrientationRight:
+        case UIImageOrientationRightMirrored:
+            transform = CGAffineTransformTranslate(transform, 0, image.size.height);
+            transform = CGAffineTransformRotate(transform, -M_PI_2);
+            break;
+        case UIImageOrientationUp:
+        case UIImageOrientationUpMirrored:
+            break;
+    }
+
+    switch (image.imageOrientation) {
+        case UIImageOrientationUpMirrored:
+        case UIImageOrientationDownMirrored:
+            transform = CGAffineTransformTranslate(transform, image.size.width, 0);
+            transform = CGAffineTransformScale(transform, -1, 1);
+            break;
+
+        case UIImageOrientationLeftMirrored:
+        case UIImageOrientationRightMirrored:
+            transform = CGAffineTransformTranslate(transform, image.size.height, 0);
+            transform = CGAffineTransformScale(transform, -1, 1);
+            break;
+        case UIImageOrientationUp:
+        case UIImageOrientationDown:
+        case UIImageOrientationLeft:
+        case UIImageOrientationRight:
+            break;
+    }
+
+    // Now we draw the underlying CGImage into a new context, applying the transform
+    // calculated above.
+    CGContextRef ctx = CGBitmapContextCreate(NULL, image.size.width, image.size.height,
+                                             CGImageGetBitsPerComponent(image.CGImage), 0,
+                                             CGImageGetColorSpace(image.CGImage),
+                                             CGImageGetBitmapInfo(image.CGImage));
+    CGContextConcatCTM(ctx, transform);
+    switch (image.imageOrientation) {
+        case UIImageOrientationLeft:
+        case UIImageOrientationLeftMirrored:
+        case UIImageOrientationRight:
+        case UIImageOrientationRightMirrored:
+            // Grr...
+            CGContextDrawImage(ctx, CGRectMake(0,0,image.size.height,image.size.width), image.CGImage);
+            break;
+
+        default:
+            CGContextDrawImage(ctx, CGRectMake(0,0,image.size.width,image.size.height), image.CGImage);
+            break;
+    }
+
+    // And now we just create a new UIImage from the drawing context
+    CGImageRef cgimg = CGBitmapContextCreateImage(ctx);
+    UIImage *img = [UIImage imageWithCGImage:cgimg];
+    CGContextRelease(ctx);
+    CGImageRelease(cgimg);
+    return img;
+}
+
 + ( NSString * ) saveImageToAppGroupFolder: ( NSURL * ) image
 {
     NSString *fileName = [[FileHelper fileNameFromPath: [image absoluteString]] stringByReplacingOccurrencesOfString:@"%20" withString:@"_"];
@@ -52,17 +128,21 @@
     if ([fileExt isEqual: @"heic"]) {
         NSString *jpgPathToFile = [[filePath stringByDeletingPathExtension] stringByAppendingPathExtension: @"jpg"];
 
-        UIImage *uiimage = [UIImage imageWithData:[NSData dataWithContentsOfURL:image]];
+        UIImage *uiImageOriginal = [UIImage imageWithData:[NSData dataWithContentsOfURL:image]];
         
-        if(![UIImageJPEGRepresentation(uiimage, 1.0) writeToFile:jpgPathToFile atomically:YES]) {
-            NSLog(@"Could not convert HEIC at path %@ to path %@. error %@", image.path , jpgPathToFile, error);
+        UIImage *uiImageRotated = [FileHelper fixRotation:uiImageOriginal];
+        
+        if(![UIImageJPEGRepresentation(uiImageRotated, 0.8) writeToFile:jpgPathToFile atomically:YES]) {
+            NSLog(@"Could not convert HEIC at path %@ to path %@. er ror %@", image.path , jpgPathToFile, error);
         } else {
             NSLog(@"COVERTED SUCCESSFULLY");
         }
         
         filePath = jpgPathToFile;
     } else {
-        if(![[NSFileManager defaultManager] copyItemAtPath:image.path toPath:filePath error:&error]) {
+        UIImage *uiImageOriginal = [UIImage imageWithData:[NSData dataWithContentsOfURL:image]];
+        UIImage *uiImageRotated = [FileHelper fixRotation:uiImageOriginal];
+        if(![UIImageJPEGRepresentation(uiImageRotated, 0.8) writeToFile:filePath atomically:YES]) {
             NSLog(@"Could not copy report at path %@ to path %@. error %@", image.path , filePath, error);
         } else {
             NSLog(@"COPIED SUCCESSFULLY");
