@@ -4,9 +4,9 @@ Pod::Spec.new do |s|
   s.version      = "1.0.0"
   s.summary      = "RNFileShareIntent"
   s.description  = <<-DESC
-                  RNFileShareIntent
+                  Adds the application to the share intent of the device, so it can be launched from other apps and receive data from them
                    DESC
-  s.homepage     = ""
+  s.homepage     = "https://github.com/andriystabryn/react-native-file-share-intent"
   s.license      = "MIT"
   # s.license      = { :type => "MIT", :file => "FILE_LICENSE" }
   s.author             = { "author" => "author@domain.cn" }
