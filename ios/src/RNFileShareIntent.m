@@ -107,8 +107,6 @@ RCT_EXPORT_METHOD(getFiles:(RCTResponseSenderBlock)callback)
 {
     NSArray *types = @[
                        (NSString *)kUTTypeImage,
-                       (NSString *)kUTTypeMPEG4,
-                       (NSString *)kUTTypeMPEG,
                        (NSString *)kUTTypeMovie
                        ];
 

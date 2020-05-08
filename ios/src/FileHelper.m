@@ -22,7 +22,7 @@
 }
 + (NSString *)fileNameFromPath:(NSString *)filePath
 {
-    return [filePath lastPathComponent];
+    return [[filePath lastPathComponent] lowercaseString];
 }
 
 + (NSDictionary *)getFileData:(NSURL *)url
@@ -140,9 +140,7 @@
         
         filePath = jpgPathToFile;
     } else {
-        UIImage *uiImageOriginal = [UIImage imageWithData:[NSData dataWithContentsOfURL:image]];
-        UIImage *uiImageRotated = [FileHelper fixRotation:uiImageOriginal];
-        if(![UIImageJPEGRepresentation(uiImageRotated, 0.8) writeToFile:filePath atomically:YES]) {
+        if(![[NSFileManager defaultManager] copyItemAtPath:image.path toPath:filePath error:&error]) {
             NSLog(@"Could not copy report at path %@ to path %@. error %@", image.path , filePath, error);
         } else {
             NSLog(@"COPIED SUCCESSFULLY");
