@@ -8,10 +8,9 @@ Pod::Spec.new do |s|
                    DESC
   s.homepage     = "https://github.com/andriystabryn/react-native-file-share-intent"
   s.license      = "MIT"
-  # s.license      = { :type => "MIT", :file => "FILE_LICENSE" }
-  s.author             = { "author" => "author@domain.cn" }
+  s.author             = { "author" => "andriy.stabryn@agiliway.com" }
   s.platform     = :ios, "7.0"
-  s.source       = { :git => "https://github.com/rastapasta/react-native-file-share-intent.git", :tag => "master" }
+  s.source       = { :git => "https://github.com/andriystabryn/react-native-file-share-intent.git", :tag => "master" }
   s.source_files  = "ios/**/*.{h,m}"
   s.requires_arc = true
 
