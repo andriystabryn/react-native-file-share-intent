@@ -1,7 +1,7 @@
 
 Pod::Spec.new do |s|
   s.name         = "RNFileShareIntent"
-  s.version      = "1.6"
+  s.version      = "1.0.0"
   s.summary      = "RNFileShareIntent"
   s.description  = <<-DESC
                   Adds the application to the share intent of the device, so it can be launched from other apps and receive data from them
